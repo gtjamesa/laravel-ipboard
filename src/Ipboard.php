@@ -1,4 +1,6 @@
-<?php namespace Alawrence\Ipboard;
+<?php
+
+namespace Alawrence\Ipboard;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException;
@@ -182,10 +184,10 @@ class Ipboard
 
         try {
             if (array_key_exists($errorCode, $this->error_exceptions)) {
-                throw new $this->error_exceptions[$errorCode];
+                throw new $this->error_exceptions[$errorCode]();
             }
 
-            throw new $this->error_exceptions[$response->getStatusCode()];
+            throw new $this->error_exceptions[$response->getStatusCode()]();
         } catch (Exception $e) {
             throw new \Exception("There was a malformed response from IPBoard.");
         }

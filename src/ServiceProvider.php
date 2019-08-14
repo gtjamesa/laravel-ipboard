@@ -9,7 +9,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected $defer = false;
 
-    private function getConfigPath(){
+    private function getConfigPath()
+    {
         return __DIR__ . '/../config/ipboard.php';
     }
 
@@ -22,17 +23,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->mergeConfigFrom($this->getConfigPath(), 'ipboard');
 
-        $this->app['ipboard'] = $this->app->share(function($app){
+        $this->app->singleton('ipboard', function ($app) {
             return new Ipboard();
         });
 
-        $this->app['command.ipboard.test'] = $this->app->share(
-            function ($app) {
-                return new Console\TestCommand($app['ipboard']);
-            }
-        );
+        $this->app->singleton('command.ipboard.test', function ($app) {
+            return new Console\TestCommand($app['ipboard']);
+        });
 
-        $this->commands(array('command.ipboard.test'));
+        $this->commands(['command.ipboard.test']);
     }
 
     /**
@@ -46,15 +45,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->getConfigPath() => config_path('ipboard.php'),
         ]);
 
-        \Validator::extend("is_csv_numeric", function($attribute, $value, $parameters, $validator){
+        \Validator::extend("is_csv_numeric", function ($attribute, $value, $parameters, $validator) {
             return preg_match("/^[0-9,]+$/i", $value);
         });
 
-        \Validator::extend("is_csv_alpha", function($attribute, $value, $parameters, $validator){
+        \Validator::extend("is_csv_alpha", function ($attribute, $value, $parameters, $validator) {
             return preg_match("/^[A-Z,]+$/i", $value);
         });
 
-        \Validator::extend("is_csv_alphanumeric", function($attribute, $value, $parameters, $validator){
+        \Validator::extend("is_csv_alphanumeric", function ($attribute, $value, $parameters, $validator) {
             return preg_match("/^[0-9A-Z,]+$/i", $value);
         });
     }
